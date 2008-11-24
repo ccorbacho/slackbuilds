@@ -1,0 +1,95 @@
+#!/bin/sh
+
+# SlackBuild for emacs-color-theme (Emacs color-theme)
+
+# Copyright 2008  Carlos Corbacho <carlos@strangeworlds.co.uk>
+# All rights reserved.
+#
+# Redistribution and use of this script, with or without modification, is
+# permitted provided that the following conditions are met:
+#
+# 1. Redistributions of this script must retain the above copyright
+#    notice, this list of conditions and the following disclaimer.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+#  WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+#  MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO
+#  EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+#  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+#  OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+#  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+#  OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+#  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+PKGNAM=emacs-color-theme
+SRCNAM=color-theme
+VERSION=${VERSION:-6.6.0}
+EMACSVERSION=${EMACSVERSION:-22.2}
+ARCH=noarch
+BUILD=${BUILD:-1}
+TAG=${TAG:-_cc}
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp/cc}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+DISTRO=${DISTRO:-slackware}
+
+if [ $DISTRO = slackware ]; then
+	PKGARCH=$ARCH
+else
+	PKGARCH=${ARCH}_${DISTRO}
+fi
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+cd $TMP
+rm -rf $SRCNAM-$VERSION
+tar xzvf $CWD/$SRCNAM-$VERSION.tar.gz
+cd $SRCNAM-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+find . -perm 666 -exec chmod 644 {} \;
+find . -perm 664 -exec chmod 644 {} \;
+find . -perm 600 -exec chmod 644 {} \;
+find . -perm 444 -exec chmod 644 {} \;
+find . -perm 400 -exec chmod 644 {} \;
+find . -perm 440 -exec chmod 644 {} \;
+find . -perm 777 -exec chmod 755 {} \;
+find . -perm 775 -exec chmod 755 {} \;
+find . -perm 511 -exec chmod 755 {} \;
+find . -perm 711 -exec chmod 755 {} \;
+find . -perm 555 -exec chmod 755 {} \;
+
+# Build and install:
+EMACSLOADPATH=$(pwd):/usr/share/emacs/${EMACSVERSION}/lisp/ \
+  make || exit 1
+
+install --owner=root --group=root --directory $PKG/usr/share/emacs/$EMACSVERSION/site-lisp/$SRCNAM/themes
+install --mode=644 --owner=root --group=root *.el{,c} $PKG/usr/share/emacs/$EMACSVERSION/site-lisp/$SRCNAM
+install --mode=644 --owner=root --group=root themes/*.el{,c} $PKG/usr/share/emacs/$EMACSVERSION/site-lisp/$SRCNAM/themes
+
+gzip -9 $PKG/usr/share/emacs/$EMACSVERSION/site-lisp/$SRCNAM/*.el
+gzip -9 $PKG/usr/share/emacs/$EMACSVERSION/site-lisp/$SRCNAM/themes/*.el
+
+# Install documentation:
+mkdir -p $PKG/usr/doc/$PKGNAM-$VERSION
+cp -a \
+   AUTHORS BUGS COPYING ChangeLog README \
+  $PKG/usr/doc/$PKGNAM-$VERSION
+chmod 644 $PKG/usr/doc/$PKGNAM-$VERSION/*
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+
+cd $PKG
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$PKGARCH-$BUILD$TAG.tgz
+
+# Clean up the extra stuff:
+if [ "$1" = "--cleanup" ]; then
+  rm -rf $TMP/$SRCNAM-$VERSION
+  rm -rf $PKG
+fi
