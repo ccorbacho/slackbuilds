@@ -2,7 +2,7 @@
 
 # SlackBuild for emacs-column-marker (Emacs column-marker)
 
-# Copyright 2007-2008  Carlos Corbacho <carlos@strangeworlds.co.uk>
+# Copyright 2008  Carlos Corbacho <carlos@strangeworlds.co.uk>
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -25,9 +25,9 @@
 PKGNAM=emacs-column-marker
 SRCNAM=column-marker
 VERSION=${VERSION:-278}
-EMACSVERSION=${EMACSVERSION:-22.2}
+EMACSVERSION=${EMACSVERSION:-$(emacs --version | head -n 1 | awk '{split($0,a," "); split(a[3],b,"."); print b[1] "." b[2]}')}
 ARCH=noarch
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-_cc}
 
 CWD=$(pwd)

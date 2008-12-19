@@ -25,9 +25,9 @@
 PKGNAM=emacs-color-theme
 SRCNAM=color-theme
 VERSION=${VERSION:-6.6.0}
-EMACSVERSION=${EMACSVERSION:-22.2}
+EMACSVERSION=${EMACSVERSION:-$(emacs --version | head -n 1 | awk '{split($0,a," "); split(a[3],b,"."); print b[1] "." b[2]}')}
 ARCH=noarch
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-_cc}
 
 CWD=$(pwd)
