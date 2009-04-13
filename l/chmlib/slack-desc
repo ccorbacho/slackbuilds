@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+      |-----handy-ruler------------------------------------------------------|
+chmlib: chmlib (library for dealing with Microsoft ITSS/CHM format files)
+chmlib:
+chmlib: CHMLIB is a library for dealing with Microsoft ITSS/CHM format files.
+chmlib: Right now, it is a very simple library, but sufficient for dealing
+chmlib: with all of the .chm files I've come across. Due to the fairly well-
+chmlib: designed indexing built into this particular file format, even a small
+chmlib: library is able to gain reasonably good performance indexing into ITSS
+chmlib: archives.
+chmlib:
+chmlib: Home Page: http://www.jedrea.com/chmlib/
+chmlib:
