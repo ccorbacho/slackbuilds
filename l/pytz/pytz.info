@@ -1,0 +1,7 @@
+PRGNAM="pytz"
+VERSION="2009l"
+HOMEPAGE="http://pytz.sourceforge.net/"
+DOWNLOAD="http://pypi.python.org/packages/source/p/pytz/pytz-2009l.tar.bz2"
+MD5SUM="ba811bb391af2558f3a96c60bffe1cd1"
+MAINTAINER="Carlos Corbacho"
+EMAIL="carlos@strangeworlds.co.uk"
