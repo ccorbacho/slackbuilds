@@ -33,14 +33,6 @@ TMP=${TMP:-/tmp/SBo}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
 
-DISTRO=${DISTRO:-slamd64}
-
-if [ $DISTRO = slackware ]; then
-	PKGARCH=$ARCH
-else
-	PKGARCH=${ARCH}_${DISTRO}
-fi
-
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 
@@ -98,7 +90,7 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$PKGARCH-$BUILD$TAG.tgz
+makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.tgz
 
 # Clean up the extra stuff:
 if [ "$1" = "--cleanup" ]; then

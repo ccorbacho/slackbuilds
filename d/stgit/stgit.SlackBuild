@@ -26,20 +26,12 @@ PKGNAM=stgit
 VERSION=${VERSION:-0.14.3}
 ARCH=noarch
 BUILD=${BUILD:-1}
-TAG=${TAG:-_cc}
+TAG=${TAG:-_SBo}
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp/SBo}
 PKG=$TMP/package-$PKGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DISTRO=${DISTRO:-slamd64}
-
-if [ $DISTRO = slackware ]; then
-	PKGARCH=$ARCH
-else
-	PKGARCH=${ARCH}_${DISTRO}
-fi
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -92,7 +84,7 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$PKGARCH-$BUILD$TAG.tgz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.tgz
 
 # Clean up the extra stuff:
 if [ "$1" = "--cleanup" ]; then
