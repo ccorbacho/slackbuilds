@@ -1,0 +1,7 @@
+PRGNAM="django"
+VERSION="1.1"
+HOMEPAGE="http://www.djangoproject.com/"
+DOWNLOAD="http://www.djangoproject.com/download/1.1/tarball/"
+MD5SUM="b2d75b4457a39c405fa2b36bf826bf6b"
+MAINTAINER="Carlos Corbacho"
+EMAIL="carlos@strangeworlds.co.uk"
