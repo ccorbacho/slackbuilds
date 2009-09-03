@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# SlackBuild for epydoc
+# SlackBuild for Django
 
 # Copyright 2009  Carlos Corbacho <carlos@strangeworlds.co.uk>
 # All rights reserved.
