@@ -10,7 +10,6 @@ SlackBuilds.org
 import os
 import subprocess
 import sys
-import tarfile
 import tempfile
 
 
@@ -30,7 +29,7 @@ def main(args):
                      "--create",
                      "--file", "%s.tar" % package_name,
                      "--directory", tempdir, "."])
-    subprocess.call(["gzip", "%s.tar" % package_name])
+    subprocess.call(["bzip2", "%s.tar" % package_name])
 
 
 if __name__ == "__main__":
