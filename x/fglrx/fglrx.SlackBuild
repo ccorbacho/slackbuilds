@@ -1,0 +1,162 @@
+#!/bin/sh
+# Adapated from the PKGBUILD for Arch:
+#
+# Maintainer: Vi0L0 <vi0l093@gmail.com>
+# Contributor: Eduardo "kensai" Romero
+# Contributor: Anssi Hannula
+# Contributor: baghera
+#
+# Converted to SlackBuild by Carlos Corbacho <carlos@strangeworlds.co.uk>
+
+PKGNAM=fglrx
+SRCNAM=fglrx-installer
+VERSION=8.721
+ARCH=${ARCH:-x86_64}
+BUILD=${BUILD:-1}
+TAG=${TAG:-_cc}
+
+KERNEL=${KERNEL:-$(uname -r)}
+KERNELPATH=${KERNELPATH:-/lib/modules/$KERNEL/build}
+
+CWD=$(pwd)
+TMP=${TMP:-/tmp}
+PKG=$TMP/package-$PKGNAM
+OUTPUT=${OUTPUT:-/tmp}
+
+if [ "${ARCH}" = "x86_64" ]; then
+  BUILDARCH=x86_64
+  ARCHDIR=x86_64
+  LIBDIRSUFFIX="64"
+fi
+if [ "${ARCH}" = "i686" ]; then
+  BUILDARCH=i386
+  ARCHDIR=x86
+fi
+
+set -e
+
+rm -rf $PKG
+mkdir -p $TMP $PKG $OUTPUT
+
+SRCDIR=$TMP/$PKGNAM
+
+cd $TMP
+rm -rf $SRCNAM-$VERSION
+tar xzvf $CWD/${SRCNAM}_$VERSION.orig.tar.gz
+cd $SRCNAM-$VERSION
+
+# Make sure ownerships and permissions are sane:
+chown -R root:root .
+chmod -R u+w,go+r-w,a-s .
+
+# Patch from Arch
+patch -Np2 -i $CWD/fglrx-2.6.33.patch || return 1
+
+# Create directories
+install -m755 -d "${PKG}/etc/ati"
+#install -m755 -d "${PKG}/etc/rc.d"
+#install -m755 -d "${PKG}/etc/profile.d"
+install -m755 -d "${PKG}/etc/acpi/events"
+
+install -m755 -d "${PKG}/usr/lib${LIBDIRSUFFIX}/dri"
+install -m755 -d "${PKG}/usr/lib${LIBDIRSUFFIX}/xorg/modules/dri"
+install -m755 -d "${PKG}/usr/lib${LIBDIRSUFFIX}/xorg/modules/drivers"
+install -m755 -d "${PKG}/usr/lib${LIBDIRSUFFIX}/xorg/modules/extensions"
+install -m755 -d "${PKG}/usr/lib${LIBDIRSUFFIX}/xorg/modules/linux"
+
+install -m755 -d "${PKG}/usr/bin"
+install -m755 -d "${PKG}/usr/sbin"
+
+install -m755 -d "${PKG}/usr/include/X11/extensions"
+install -m755 -d "${PKG}/usr/include/GL"
+
+install -m755 -d "${PKG}/usr/share/applications"
+install -m755 -d "${PKG}/usr/share/ati/amdcccle"
+install -m755 -d "${PKG}/usr/man/man8"
+install -m755 -d "${PKG}/usr/share/pixmaps"
+install -m755 -d $PKG/lib/modules/${KERNEL}/drivers/char/drm/
+
+cp arch/${ARCHDIR}/lib/modules/fglrx/build_mod/libfglrx_ip.a.GCC4 lib/modules/fglrx/build_mod/
+cp lib/modules/fglrx/build_mod/2.6.x/Makefile lib/modules/fglrx/build_mod/
+
+( cd lib/modules/fglrx/build_mod
+  make -C $KERNELPATH SUBDIRS="$(pwd)" ARCH=${BUILDARCH} modules
+  install -m644 fglrx.ko $PKG/lib/modules/${KERNEL}/drivers/char/drm/
+)
+
+( if [ "$ARCH" = "i686" ]; then
+    cd "x750/usr/X11R6/lib/modules"
+  elif [ "$ARCH" = "x86_64" ]; then
+    cd "x750_64a/usr/X11R6/lib64/modules"
+  fi
+
+  #install -m644 *.a "${PKG}/usr/lib${LIBDIRSUFFIX}/xorg/modules/" || return 1
+  install -m755 *.so $PKG/usr/lib${LIBDIRSUFFIX}/xorg/modules/
+  install -m755 drivers/*.so $PKG/usr/lib${LIBDIRSUFFIX}/xorg/modules/drivers/
+  install -m755 linux/*.so $PKG/usr/lib${LIBDIRSUFFIX}/xorg/modules/linux/
+  install -m755 extensions/libglx.so $PKG/usr/lib${LIBDIRSUFFIX}/xorg/modules/extensions/
+  #install -m755 extensions/libdri.so "${PKG}/usr/lib${LIBDIRSUFFIX}/xorg/modules/extensions/libdri.ati" || return 1
+)
+
+( cd arch/${ARCHDIR}/usr
+  install -m755 X11R6/bin/* ${PKG}/usr/bin/
+  install -m755 sbin/* ${PKG}/usr/sbin/
+  install -m755 X11R6/lib${LIBDIRSUFFIX}/*.so* ${PKG}/usr/lib${LIBDIRSUFFIX}/
+  install -m644 X11R6/lib${LIBDIRSUFFIX}/*.a ${PKG}/usr/lib${LIBDIRSUFFIX}/ # really needed?
+  install -m644 X11R6/lib${LIBDIRSUFFIX}/*.cap ${PKG}/usr/lib${LIBDIRSUFFIX}/
+  install -m755 X11R6/lib${LIBDIRSUFFIX}/modules/dri/*.so ${PKG}/usr/lib${LIBDIRSUFFIX}/dri/
+  install -m755 lib${LIBDIRSUFFIX}/*.so* ${PKG}/usr/lib${LIBDIRSUFFIX}/
+)
+( cd $PKG/usr/lib$LIBDIRSUFFIX
+  ln -sf dri/fglrx_dri.so xorg/modules/dri/fglrx_dri.so
+  ln -sf libfglrx_dm.so.1.0 libfglrx_dm.so.1
+  ln -sf libfglrx_pp.so.1.0 libfglrx_pp.so.1
+  ln -sf libfglrx_tvout.so.1.0 libfglrx_tvout.so.1
+  ln -sf libfglrx_gamma.so.1.0 libfglrx_gamma.so.1
+  ln -sf libGL.so.1.2 libGL.so.1
+  ln -sf libGL.so.1.2 libGL.so
+)
+
+install -m644 etc/ati/* $PKG/etc/ati/
+chmod 755 $PKG/etc/ati/authatieventsd.sh
+
+install -m644 usr/X11R6/include/X11/extensions/*.h "${PKG}/usr/include/X11/extensions/"
+install -m644 usr/X11R6/bin/amdupdaterandrconfig "${PKG}/usr/bin/"
+install -m644 usr/include/GL/*.h "${PKG}/usr/include/GL/"
+install -m755 usr/sbin/*.sh "${PKG}/usr/sbin/"
+install -m644 usr/share/ati/amdcccle/* ${PKG}/usr/share/ati/amdcccle/ # ? what are these files for?
+install -m644 usr/share/applications/amdcccle.desktop ${PKG}/usr/share/applications/
+install -m644 usr/share/applications/amdccclesu.desktop ${PKG}/usr/share/applications/
+install -m644 usr/share/icons/*.xpm ${PKG}/usr/share/pixmaps/
+install -m644 usr/share/man/man8/*.8 ${PKG}/usr/man/man8/
+
+# ACPI example files
+install -m755 usr/share/doc/fglrx/examples/etc/acpi/*.sh ${PKG}/etc/acpi/
+sed -i -e 's/usr\/X11R6/usr/g' ${PKG}/etc/acpi/ati-powermode.sh
+install -m644 usr/share/doc/fglrx/examples/etc/acpi/events/* ${PKG}/etc/acpi/events/
+
+# TODO - convert this for Slackware
+# # Add ATI Events Daemon launcher
+# install -m755 "${SRCDIR}/atieventsd.sh" "${PKG}/etc/rc.d/atieventsd" || return 1
+
+# Compress and link manpages, if any:
+if [ -d $PKG/usr/man ]; then
+  ( cd $PKG/usr/man
+    for manpagedir in $(find . -type d -name "man*") ; do
+      ( cd $manpagedir
+        for eachpage in $( find . -type l -maxdepth 1) ; do
+          ln -s $( readlink $eachpage ).gz $eachpage.gz
+          rm $eachpage
+        done
+        gzip -9 *.?
+      )
+    done
+  )
+fi
+
+mkdir -p $PKG/install
+cat $CWD/slack-desc > $PKG/install/slack-desc
+cat $CWD/doinst.sh > $PKG/install/doinst.sh
+
+cd $PKG
+makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$ARCH-$BUILD$TAG.tgz
