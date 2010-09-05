@@ -25,7 +25,7 @@
 PKGNAM=ipython
 VERSION=${VERSION:-0.10}
 ARCH=${ARCH:-i486}
-BUILD=${BUILD:-1}
+BUILD=${BUILD:-2}
 TAG=${TAG:-_SBo}
 
 CWD=$(pwd)
@@ -57,7 +57,7 @@ python setup.py \
 # Install documentation:
 mkdir -p $PKG/usr/doc
 mv $PKG/usr/share/doc/ipython $PKG/usr/doc/ipython-$VERSION
-chmod -R 644 $PKG/usr/doc/$PKGNAM-$VERSION/*
+find $PKG/usr/doc/$PKGNAM-$VERSION -type f -exec chmod 0644 {} \;
 
 # Compress and link manpages, if any:
 mv $PKG/usr/share/man $PKG/usr
