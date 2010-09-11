@@ -24,10 +24,17 @@
 
 PKGNAM=django
 SRCNAM=Django
-VERSION=${VERSION:-1.2.1}
-ARCH=${ARCH:-i486}
+VERSION=${VERSION:-1.2.3}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
+
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp/SBo}
