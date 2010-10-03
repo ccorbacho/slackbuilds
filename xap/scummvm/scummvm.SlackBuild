@@ -3,7 +3,7 @@
 # Slackware build script for scummvm
 
 # Copyright 2006  Halim Issa <yallaone@gmail.com>
-# Copyright 2008  Carlos Corbacho <carlos@strangeworlds.co.uk> (Slamd64 port)
+# Copyright 2008, 2010  Carlos Corbacho <carlos@strangeworlds.co.uk>
 # All rights reserved.
 #
 # Redistribution and use of this script, with or without modification, is
@@ -24,17 +24,23 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=scummvm
-VERSION=0.13.1
-ARCH=${ARCH:-i486}
+VERSION=${VERSION:-1.1.1}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
+NUMJOBS=${NUMJOBS:-3}
+
+if [ -z "$ARCH" ]; then
+  case "$( uname -m )" in
+    i?86) ARCH=i486 ;;
+    arm*) ARCH=arm ;;
+       *) ARCH=$( uname -m ) ;;
+  esac
+fi
 
 CWD=$(pwd)
 TMP=${TMP:-/tmp/SBo}
 PKG=$TMP/package-$PRGNAM
 OUTPUT=${OUTPUT:-/tmp}
-
-DOCS="AUTHORS COPYING NEWS README TODO"
 
 if [ "$ARCH" = "i486" ]; then
   SLKCFLAGS="-O2 -march=i486 -mtune=i686"
@@ -45,7 +51,12 @@ elif [ "$ARCH" = "i686" ]; then
 elif [ "$ARCH" = "x86_64" ]; then
   SLKCFLAGS="-O2 -fPIC"
   LIBDIRSUFFIX="64"
+else
+  SLKCFLAGS="-O2"
+  LIBDIRSUFFIX=""
 fi
+
+DOCS="AUTHORS COPYING NEWS README TODO"
 
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
@@ -66,7 +77,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --disable-debug \
   || exit 1
 
-make || exit 1
+make -j $NUMJOBS || exit 1
 make install DESTDIR=$PKG || exit 1
 
 strip --strip-unneeded $PKG/usr/games/scummvm 2> /dev/null
