@@ -24,10 +24,11 @@
 
 PKGNAM=emacs-color-theme
 SRCNAM=color-theme
-VERSION=${VERSION:-6.6.0}
 EMACSVERSION=${EMACSVERSION:-$(emacs --version | head -n 1 | awk '{split($0,a," "); split(a[3],b,"."); print b[1] "." b[2]}')}
+VERSION=${VERSION:-6.6.0}
+PKGVERSION=${VERSION}_${EMACSVERSION}
 ARCH=noarch
-BUILD=${BUILD:-2}
+BUILD=${BUILD:-1}
 TAG=${TAG:-_cc}
 
 CWD=$(pwd)
@@ -86,7 +87,7 @@ mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
 
 cd $PKG
-/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$VERSION-$PKGARCH-$BUILD$TAG.tgz
+/sbin/makepkg -l y -c n $OUTPUT/$PKGNAM-$PKGVERSION-$PKGARCH-$BUILD$TAG.tgz
 
 # Clean up the extra stuff:
 if [ "$1" = "--cleanup" ]; then
