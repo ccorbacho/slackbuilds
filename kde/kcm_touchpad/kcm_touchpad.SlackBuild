@@ -66,7 +66,7 @@ tar xvf $CWD/mishaaq-$PRGNAM-$PRGNAM-$VERSION-0-g$GIT_REVISION.tar.gz
 cd mishaaq-$PRGNAM-$GIT_REVISION
 
 # Make this appear under 'Input Actions' again in newer KDE releases
-sed -i s/keyboard-and-mouse/input-actions/ touchpad.desktop
+sed -i s/keyboard-and-mouse/input-devices/ touchpad.desktop
 
 chown -R root:root .
 find . \
