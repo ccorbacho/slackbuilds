@@ -23,8 +23,7 @@
 #  ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 PRGNAM=lxc
-VERSION=${VERSION:-0.8.0_rc2}
-SRC_VERSION=${SRC_VERSION:-0.8.0-rc2}
+VERSION=${VERSION:-0.8.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
 NUMJOBS=${NUMJOBS:-7}
@@ -63,9 +62,9 @@ set -e
 rm -rf $PKG
 mkdir -p $TMP $PKG $OUTPUT
 cd $TMP
-rm -rf $PRGNAM-$SRC_VERSION
-tar xvf $CWD/$PRGNAM-$SRC_VERSION.tar.gz
-cd $PRGNAM-$SRC_VERSION
+rm -rf $PRGNAM-$VERSION
+tar xvf $CWD/$PRGNAM-$VERSION.tar.gz
+cd $PRGNAM-$VERSION
 chown -R root:root .
 find . \
  \( -perm 777 -o -perm 775 -o -perm 711 -o -perm 555 -o -perm 511 \) \
@@ -82,6 +81,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --localstatedir=/var \
   --mandir=/usr/man \
   --docdir=/usr/doc/$PRGNAM-$VERSION \
+  --disable-apparmor \
   --build=$ARCH-slackware-linux
 
 make -j $NUMJOBS
