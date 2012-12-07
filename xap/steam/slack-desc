@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.
+# Line up the first '|' above the ':' following the base package name, and
+# the '|' on the right side marks the last column you can put a character in.
+# You must make exactly 11 lines for the formatting to be correct.  It's also
+# customary to leave one space after the ':' except on otherwise blank lines.
+
+     |-----handy-ruler------------------------------------------------------|
+steam: steam (Installer of the Steam software distribution service)
+steam:
+steam: Steam is a software distribution service with an online store,
+steam: automated installation, automatic updates, achievements, SteamCloud
+steam: synchronized savegame and screenshot functionality, and many social
+steam: features.
+steam:
+steam:
+steam:
+steam:
+steam:
