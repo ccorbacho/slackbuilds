@@ -27,7 +27,6 @@ PRGNAM=scummvm
 VERSION=${VERSION:-1.6.0}
 BUILD=${BUILD:-1}
 TAG=${TAG:-_SBo}
-NUMJOBS=${NUMJOBS:-2}
 
 if [ -z "$ARCH" ]; then
   case "$( uname -m )" in
@@ -65,7 +64,11 @@ rm -rf $PRGNAM-$VERSION
 tar xvf $CWD/$PRGNAM-$VERSION.tar.bz2 || exit 1
 cd $PRGNAM-$VERSION || exit 1
 chown -R root:root .
-chmod -R u+w,go+r-w,a-s .
+find -L . \
+ \( -perm 777 -o -perm 775 -o -perm 750 -o -perm 711 -o -perm 555 \
+  -o -perm 511 \) -exec chmod 755 {} \; -o \
+ \( -perm 666 -o -perm 664 -o -perm 640 -o -perm 600 -o -perm 444 \
+ -o -perm 440 -o -perm 400 \) -exec chmod 644 {} \;
 
 CFLAGS="$SLKCFLAGS" \
 CXXFLAGS="$SLKCFLAGS" \
@@ -77,7 +80,7 @@ CXXFLAGS="$SLKCFLAGS" \
   --disable-debug \
   || exit 1
 
-make -j $NUMJOBS || exit 1
+make || exit 1
 make install DESTDIR=$PKG || exit 1
 
 # The .desktop file for the menu is not being installed
